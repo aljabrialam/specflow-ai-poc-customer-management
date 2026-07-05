@@ -66,7 +66,19 @@ Applications should remain cloud agnostic whenever practical.
 
 ---
 
-### V. AI-Assisted Development
+### V. Backward Compatibility and Regression Safety
+
+All new features must preserve existing behavior unless a breaking change is explicitly approved.
+
+Required expectations:
+- Existing functionality must remain available unless the specification explicitly calls for a breaking change.
+- New features must be implemented as additive changes whenever practical.
+- Every new feature must include regression tests that verify the existing workflow still works.
+- If a breaking change is unavoidable, it must be documented in the specification and approved before implementation.
+
+---
+
+### VI. AI-Assisted Development
 
 AI shall assist in generating:
 
