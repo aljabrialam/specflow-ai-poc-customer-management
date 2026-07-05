@@ -3,7 +3,7 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Response, status
+from fastapi import FastAPI, HTTPException, Query, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 
@@ -84,11 +84,18 @@ def health() -> dict[str, str]:
 
 
 @app.get("/api/customers", response_model=list[Customer])
-def list_customers() -> list[dict[str, Any]]:
+def list_customers(search: str | None = Query(default=None, description="Search customers by name, email, or company")) -> list[dict[str, Any]]:
     with get_connection() as connection:
-        rows = connection.execute(
-            "SELECT id, name, email, phone, company FROM customers ORDER BY id DESC"
-        ).fetchall()
+        if search:
+            term = f"%{search.strip()}%"
+            rows = connection.execute(
+                "SELECT id, name, email, phone, company FROM customers WHERE name LIKE ? OR email LIKE ? OR company LIKE ? ORDER BY id DESC",
+                (term, term, term),
+            ).fetchall()
+        else:
+            rows = connection.execute(
+                "SELECT id, name, email, phone, company FROM customers ORDER BY id DESC"
+            ).fetchall()
     return [dict(row) for row in rows]
 
 
