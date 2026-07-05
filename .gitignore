@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.vite/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*.db
+.env
+.venv/
+.DS_Store
+coverage/
+e2e/test-results/
+backend/tests/report.html
