@@ -150,6 +150,39 @@ def test_validation_rejects_invalid_payload(client):
     assert response.status_code == 422
 
 
+def test_list_customers_can_be_filtered_by_search_term(client):
+    client.post(
+        "/api/customers",
+        json={
+            "name": "Ada Lovelace",
+            "email": "ada@example.com",
+            "phone": "+1-555-1234",
+            "company": "ACME",
+        },
+    )
+    client.post(
+        "/api/customers",
+        json={
+            "name": "Grace Hopper",
+            "email": "grace@example.com",
+            "phone": "+1-555-5678",
+            "company": "Contoso",
+        },
+    )
+
+    response = client.get("/api/customers?search=grace")
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body) == 1
+    assert body[0]["email"] == "grace@example.com"
+
+    company_response = client.get("/api/customers?search=ACME")
+    assert company_response.status_code == 200
+    company_body = company_response.json()
+    assert len(company_body) == 1
+    assert company_body[0]["company"] == "ACME"
+
+
 def pytest_configure(config: Any) -> None:
     config.addinivalue_line(
         "markers",
